@@ -1,7 +1,10 @@
 services:
-#    payment.example:
-#        class: PaymentBundle\Example
-#        arguments: ["@service_id", "plain_value", "%parameter%"]
-    app.stripe:
+    payment.stripe:
         class: PaymentBundle\Service\AppStripe
+        arguments: ['%stripe%', '@doctrine.orm.entity_manager', '@security.token_storage']
+    payment.stripe.subscription:
+        class: PaymentBundle\Bridge\Stripe\StripeSubscription
+        arguments: ['%stripe%', '@doctrine.orm.entity_manager', '@security.token_storage']
+    payment.stripe.customer:
+        class: PaymentBundle\Bridge\Stripe\StripeCustomer
         arguments: ['%stripe%', '@doctrine.orm.entity_manager', '@security.token_storage']

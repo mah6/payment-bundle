@@ -17,7 +17,7 @@ class StripeSubscription
 		parent::__construct($apiKeys, $em, $tokenStorage);		
 	}
 
-	public function createSubscription()
+	public function createSubscription($customerId, $planId)
 	{
 		$subscription = Subscription::create([
 			'customer' => $customerId,

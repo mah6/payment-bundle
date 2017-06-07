@@ -17,7 +17,7 @@ use PaymentBundle\Entity\StripePlan;
 
 class AppStripe
 {
-	const SERVICE_NAME = 'app.stripe';
+	const SERVICE_NAME = 'payment.stripe';
 	private $apiKeys;
 	private $em;
 	private $tokenStorage;

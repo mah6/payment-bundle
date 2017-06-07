@@ -22,7 +22,7 @@ class StripeBase
 		Stripe::setApiKey($this->apiKeys['secret_key']);
 	}
 
-	public function bind($stripeObject, $entity)
+	public static function bind($stripeObject, $entity, array $options = null)
 	{
 		$vars = get_object_vars($stripeObject);
 
