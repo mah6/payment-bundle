@@ -44,7 +44,7 @@ class StripePlanType extends AbstractType
     public function configureOptions(OptionsResolver $resolver)
     {
         $resolver->setDefaults(array(
-            'data_class' => 'AppBundle\Entity\StripePlan'
+            'data_class' => 'PaymentBundle\Entity\StripePlan'
         ));
     }
 
