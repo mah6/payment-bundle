@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\JsonResponse;
 
 use AppBundle\Entity\User;
-use PaymentBundle\Bridge\Stripe\StripeSubscription;
+use PaymentBundle\Bridge\Stripe\SubscriptionBridge;
 
 /**
  * @Route("/stripe/subscription")
@@ -22,7 +22,7 @@ class SubscriptionController extends Controller
 	 */
 	public function subscriptionsAction(Request $request)
 	{
-		$appStripe = $this->get(StripeSubscription::SERVICE_NAME);
+		$appStripe = $this->get(SubscriptionBridge::SERVICE_NAME);
 		$users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
 		$plans = $this->getDoctrine()->getRepository('PaymentBundle:StripePlan')->findAll();
 

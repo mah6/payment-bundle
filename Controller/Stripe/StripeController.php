@@ -14,7 +14,8 @@ use AppBundle\Entity\User;
 use PaymentBundle\Entity\StripePlan;
 use PaymentBundle\Form\StripePlanType;
 use PaymentBundle\Bridge\Stripe\StripeBase;
-use PaymentBundle\Bridge\Stripe\StripeCustomer;
+use PaymentBundle\Bridge\Stripe\CustomerBridge;
+use PaymentBundle\Entity\StripeCustomer;
 
 /**
  * @Route("/stripe")
@@ -47,33 +48,6 @@ class StripeController extends Controller
 		return $this->render('stripe/checkout.html.twig', [
 			'pk' => $stripeKeys['publishable_key'],
 		]);
-	}
-
-	/**
-	 * @Route("/customer/create/{id}", name="stripe.customer.create")
-	 */
-	public function createCustomerAction(Request $request, User $user)
-	{
-		$customerService = $this->get(StripeCustomer::SERVICE_NAME);
-		$customer = $customerService->createCustomer([
-			'email' => $user->getEmail(),
-			'metadata' => ['id' => $user->getId()]
-		]);
-		$appCustomer = new StripeCustomer();
-		StripeBase::bind($customer, $appCustomer);
-		$em = $this->get('doctrine.orm.entity_manager');
-		$em->persist($appCustomer);
-		$em->flush();
-
-		return $this->redirectToRoute('stripe.subscription.list');
-	}
-
-	/**
-	 * @Route("/customer/delete/{id}", name="stripe.customer.delete")
-	 */
-	public function deleteCustomerAction(Request $request, User $user)
-	{
-		return $this->redirectToRoute('stripe.subscription.list');
 	}
 
 	/**

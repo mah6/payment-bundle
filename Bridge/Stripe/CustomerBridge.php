@@ -1,8 +1,15 @@
 <?php
 
 namespace PaymentBundle\Bridge\Stripe;
+use Symfony\Component\OptionsResolver\OptionsResolver;
 
-class StripeCustomer extends StripeBase
+use Stripe\Stripe;
+use Stripe\Charge;
+use Stripe\Customer;
+use Stripe\Plan;
+use Stripe\Subscription;
+
+class CustomerBridge extends StripeBase
 {
 	const SERVICE_NAME = "payment.stripe.customer";
 
@@ -31,5 +38,16 @@ class StripeCustomer extends StripeBase
 
 		return $resolver->resolve($options);
 	}
+
+	public function bind($stripeObject, $entity, array $mapping = array())
+	{
+		$mapping = array_merge([
+			'id' => 'customerId',
+			'createdAt' => 'created',
+		], $mapping);
+
+		parent::bind($stripeObject, $entity, $mapping);
+	}
+
 
 }

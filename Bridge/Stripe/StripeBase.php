@@ -2,6 +2,10 @@
 
 namespace PaymentBundle\Bridge\Stripe;
 
+use Doctrine\ORM\EntityManager;
+use Symfony\Component\Security\Core\Authentication\Token\Storage\TokenStorage;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+
 use Stripe\Stripe;
 use Stripe\Charge;
 use Stripe\Customer;
@@ -22,23 +26,32 @@ class StripeBase
 		Stripe::setApiKey($this->apiKeys['secret_key']);
 	}
 
-	public static function bind($stripeObject, $entity, array $options = null)
+	public function bind($stripeObject, $entity, array $mapping = array())
 	{
-		$vars = get_object_vars($stripeObject);
+		// $vars = get_object_vars($stripeObject);
+		$vars = $stripeObject->__toArray(true);
 
 		foreach ($vars as $property => $value) {
 
-			$this->callUserFunc($entity, $property, $value, 'set');
+			if (array_key_exists($property, $mapping)) {
+				$property = $mapping[$property];
+			}
 
+			self::callUserFunc($entity, $property, $value, 'set');
 		}
 	}
 
-	public static function callUserFunc($object, $property, $params, $prefix = 'get')
+	public static function callUserFunc($object, $property, $params = null, $prefix = 'get')
 	{
+		$property = explode('_', $property);
+		array_walk($property, function (&$val) {
+			$val = ucfirst($val);
+		});
+		$property = implode($property);
 		$method = $prefix . ucfirst($property);
 
 		if (method_exists($object, $method)) {
-			return call_user_func([$object => $method], $params);
+			return call_user_func([$object, $method], $params);
 		}
 
 		return ;

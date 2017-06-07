@@ -3,8 +3,8 @@ services:
         class: PaymentBundle\Service\AppStripe
         arguments: ['%stripe%', '@doctrine.orm.entity_manager', '@security.token_storage']
     payment.stripe.subscription:
-        class: PaymentBundle\Bridge\Stripe\StripeSubscription
+        class: PaymentBundle\Bridge\Stripe\SubscriptionBridge
         arguments: ['%stripe%', '@doctrine.orm.entity_manager', '@security.token_storage']
     payment.stripe.customer:
-        class: PaymentBundle\Bridge\Stripe\StripeCustomer
+        class: PaymentBundle\Bridge\Stripe\CustomerBridge
         arguments: ['%stripe%', '@doctrine.orm.entity_manager', '@security.token_storage']

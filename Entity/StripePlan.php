@@ -249,4 +249,3 @@ class StripePlan
         return $this->name;
     }
 }
-

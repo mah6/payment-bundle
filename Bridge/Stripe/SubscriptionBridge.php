@@ -10,7 +10,7 @@ use Stripe\Customer;
 use Stripe\Plan;
 use Stripe\Subscription;
 
-class StripeSubscription
+class SubscriptionBridge
 {
 	const SERVICE_NAME = "payment.stripe.subscription";
 
