@@ -12,10 +12,7 @@ use Stripe\Subscription;
 
 class StripeSubscription
 {
-	public function __construct($apiKeys, EntityManager $em, TokenStorage $tokenStorage)
-	{
-		parent::__construct($apiKeys, $em, $tokenStorage);		
-	}
+	const SERVICE_NAME = "payment.stripe.subscription";
 
 	public function createSubscription($customerId, $planId)
 	{

@@ -13,6 +13,8 @@ use PaymentBundle\Service\AppStripe;
 use AppBundle\Entity\User;
 use PaymentBundle\Entity\StripePlan;
 use PaymentBundle\Form\StripePlanType;
+use PaymentBundle\Bridge\Stripe\StripeBase;
+use PaymentBundle\Bridge\Stripe\StripeCustomer;
 
 /**
  * @Route("/stripe")
@@ -48,29 +50,22 @@ class StripeController extends Controller
 	}
 
 	/**
-	 * @Route("/subscriptions", name="stripe.subscriptions")
-	 */
-	public function subscriptionsAction(Request $request)
-	{
-		$appStripe = $this->get(AppStripe::SERVICE_NAME);
-		$users = $this->getDoctrine()->getRepository('AppBundle:User')->findAll();
-		$plans = $appStripe->getAllPlans();
-
-		return $this->render('stripe/subscriptions.html.twig', [
-			'users' => $users,
-			'plans' => $plans,
-		]);
-	}
-
-	/**
 	 * @Route("/customer/create/{id}", name="stripe.customer.create")
 	 */
 	public function createCustomerAction(Request $request, User $user)
 	{
-		$appStripe = $this->get(AppStripe::SERVICE_NAME);
-		$appStripe->createCustomerForUser($user);
+		$customerService = $this->get(StripeCustomer::SERVICE_NAME);
+		$customer = $customerService->createCustomer([
+			'email' => $user->getEmail(),
+			'metadata' => ['id' => $user->getId()]
+		]);
+		$appCustomer = new StripeCustomer();
+		StripeBase::bind($customer, $appCustomer);
+		$em = $this->get('doctrine.orm.entity_manager');
+		$em->persist($appCustomer);
+		$em->flush();
 
-		return $this->redirectToRoute('stripe.subscriptions');
+		return $this->redirectToRoute('stripe.subscription.list');
 	}
 
 	/**
@@ -78,7 +73,7 @@ class StripeController extends Controller
 	 */
 	public function deleteCustomerAction(Request $request, User $user)
 	{
-		return $this->redirectToRoute('stripe.subscriptions');
+		return $this->redirectToRoute('stripe.subscription.list');
 	}
 
 	/**
@@ -91,7 +86,7 @@ class StripeController extends Controller
 
 		return new Response('<body>Subscription created</body>');
 
-		return $this->redirectToRoute('stripe.subscriptions');
+		return $this->redirectToRoute('stripe.subscription.list');
 	}
 
 }
